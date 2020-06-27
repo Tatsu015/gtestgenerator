@@ -1,0 +1,23 @@
+#include <gtest/gtest.h>
+#define private public
+#define protected public
+
+#include ssssssssssss
+
+using namespace ::testing;
+
+$$FOREACH ${classes}
+class ${classname}_test : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+  }
+  virtual void TearDown() {
+  }
+};
+
+$$FOREACH ${func}
+TEST(${classname}_test, ${funcname}) {
+}
+
+$$NEXT ${func}
+$$NEXT ${classes}

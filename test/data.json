@@ -1,0 +1,24 @@
+[
+    {
+        "filepath":"test.cpp",
+        "includepath":[
+            {"filepath":"aaa.h"},
+            {"filepath":"bbb.h"},
+            {"filepath":"ccc.h"}
+        ],
+        "classes":[
+            {"classname":"class1",
+                "func":[
+                    {"funcname":"c1aaa1","body":"c1sample1"},
+                    {"funcname":"c1bbb1","body":"c1sample2"}
+                ]
+            },
+            {"classname":"class2",
+                "func":[
+                    {"funcname":"c2aaa1","body":"c2sample1"},
+                    {"funcname":"c2bbb1","body":"c2sample2"}
+                ]
+            }
+        ]
+    }
+]
