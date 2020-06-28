@@ -2,7 +2,9 @@
 #define private public
 #define protected public
 
-#include ssssssssssss
+$$FOREACH ${includepath}
+#include ${filepath}
+$$NEXT ${includepath}
 
 using namespace ::testing;
 
@@ -21,3 +23,4 @@ TEST(${classname}_test, ${funcname}) {
 
 $$NEXT ${func}
 $$NEXT ${classes}
+aaaaaaaaaaa
