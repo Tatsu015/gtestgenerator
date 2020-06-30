@@ -39,8 +39,8 @@ def __line_to_object(line):
     return obj
 
 def __trimmed(data):
-    derimita = '-----------------------------------\n'
-    tmp = data.split(derimita)
+    DERIMITA = '-----------------------------------\n'
+    tmp = data.split(DERIMITA)
     table_data = re.split(r"\d+ file analyzed.", tmp[1])
 
     return table_data[0]
