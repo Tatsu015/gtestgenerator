@@ -2,8 +2,9 @@
 
 import json
 import re
+import os
 
-class Component:
+class _Component:
     def __init__(self):
         self.__loop_key = ''
         self.__body = ''
@@ -20,7 +21,7 @@ class Component:
                     t = child.to_code(e)
                     for k,v in e.items():
                         if type(v) == str:
-                            t = t.replace(self.append_val_key(k), v)
+                            t = t.replace(self._append_val_key(k), v)
                     tmp = tmp + t
             else:
                 tmp = child.to_code(data)
@@ -37,12 +38,12 @@ class Component:
                 if self.__loop_key is not '':
                     self.__body = sp["before"]
                 else:
-                    c = Component()
+                    c = _Component()
                     c.__body = sp["before"]
                     self.__child_components.append(c)
 
             if sp["target"] is not '':
-                c = Component()
+                c = _Component()
                 c.analyze(sp["target"])
                 c.__loop_key = sp["key"]
                 self.__child_components.append(c)
@@ -65,34 +66,37 @@ class Component:
         me = re.search(r'\$\$NEXT ' + re.escape(key), tmp)
 
         return {
-            "key":self.strip_val_key(key),
+            "key":self._strip_val_key(key),
             "before":s[:ms.start()],
             "target":tmp[1: me.start()],
             "after":tmp[me.end():].rstrip()
             }
 
-    def strip_val_key(self,s):
+    def _strip_val_key(self,s):
         return s.replace('$','').replace('{','').replace('}','')
 
-    def append_val_key(self,s):
+    def _append_val_key(self,s):
         return '${' + s + '}'
 
-    def exist_variable(self,s):
-        if '$' in s:
-            return True
-        else:
-            return False
+def create_template(filepath):
+    t = _Component()
 
-f = open('test/main.template', 'r')
-template = f.read()
-t = Component()
-t.analyze(template)
+    f = open(filepath, 'r')
+    d = f.read()
+    t.analyze(d)
 
-jd=open('test/data.json', 'r')
-data = json.loads(jd.read())
+    return t
 
-for dt in data:
-    d = t.to_code(dt["testdata"])
-    out = open(dt["filepath"],mode='w')
-    out.write(d)
 
+def generate_test_code(template,data_objects):
+
+    print(data_objects)
+
+    for data_object in data_objects:
+        dstfilepath = data_object["dstfilepath"]
+        dstdirpath = os.path.dirname(dstfilepath)
+        os.makedirs(dstdirpath, exist_ok=True)
+
+        out = open(dstfilepath,mode='w')
+        d = template.to_code(data_object["testdata"])
+        out.write(d)

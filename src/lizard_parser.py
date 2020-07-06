@@ -57,21 +57,31 @@ def parse(file_path):
 
     return lines
 
-class SourceCodeManager:
+class SourceCodeInfo:
     def __init__(self):
         self.__files = []
 
-    def to_json(self, line):
+    def to_json(self, lines):
+        for line in lines:
+            self.__line_to_json(line)
+
+        return self.__files
+
+    def __line_to_json(self, line):
         #　use file basename insted class name
         # because function (not method) has no class name
+        file_name = line['path']
+        dst_filepath = file_name.replace('.cpp', '_test.cpp').replace('./','./testcode/')
         class_name = line['class']
         if class_name == '':
             class_name = line['basename']
         func_name = line['function']
 
-        filepathes = [d.get('filepath') for d in self.__files]
-        if line['path'] in filepathes:
-            classes = [d.get('testdata').get('classes') for d in self.__files][0]
+        # filepathes = [d.get('filepath') for d in self.__files]
+        hit_files = [x for x in self.__files if x['filepath'] == file_name]
+        if len(hit_files) != 0:
+            # classes = [d.get('testdata').get('classes') for d in self.__files][0]
+            classes = [d.get('testdata').get('classes') for d in hit_files][0]
             hit_classes = [x for x in classes if x['classname'] == class_name]
             if len(hit_classes) != 0:
                 cls = hit_classes[0]
@@ -87,29 +97,24 @@ class SourceCodeManager:
                     str_index = str(index)
                     fnc = [x for x in fncs if x['funcname'] == (func_name + str_index)]
 
-                cls['func'].append({'funcname':(func_name + str_index),'body':''})
+                cls['func'].append({'funcname':(func_name + str_index),'body':'','nloc:':line['nloc'],'ccn':line['ccn']})
             else:
-                classes.append({'classname':class_name,'func':[{'funcname':line['function'],'body':''}]})
+                classes.append({'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc:':line['nloc'],'ccn':line['ccn']}]})
         else:
             self.__files.append({
-                'filepath':line['path'],
+                'filepath':file_name,
+                'dstfilepath':dst_filepath,
                 'testdata':{
                     'includepath':[
                         {'filepath':line['basename']+'.h'}
                     ],
                     'classes':[
-                        {'classname':class_name,'func':[{'funcname':line['function'],'body':''}
+                        {'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc:':line['nloc'],'ccn':line['ccn']}
                         ]}
                     ]
                 }
             })
 
+
     def dump(self):
         print(json.dumps(self.__files,indent=1))
-
-lines = parse('test/test.lizard')
-m = SourceCodeManager()
-for line in lines:
-    m.to_json(line)
-
-m.dump()
