@@ -3,6 +3,7 @@
 import re
 import os
 import json
+import parameter
 
 def __class_and_function(data):
     if '::' in data:
@@ -71,7 +72,7 @@ class SourceCodeInfo:
         #　use file basename insted class name
         # because function (not method) has no class name
         file_name = line['path']
-        dst_filepath = file_name.replace('.cpp', '_test.cpp').replace('./','./testcode/')
+        dst_filepath = file_name.replace('.cpp', '_test.cpp').replace('./','./' + parameter.get('destination') + '/')
         class_name = line['class']
         if class_name == '':
             class_name = line['basename']
@@ -97,9 +98,9 @@ class SourceCodeInfo:
                     str_index = str(index)
                     fnc = [x for x in fncs if x['funcname'] == (func_name + str_index)]
 
-                cls['func'].append({'funcname':(func_name + str_index),'body':'','nloc:':line['nloc'],'ccn':line['ccn']})
+                cls['func'].append({'funcname':(func_name + str_index),'body':'','nloc':line['nloc'],'ccn':line['ccn']})
             else:
-                classes.append({'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc:':line['nloc'],'ccn':line['ccn']}]})
+                classes.append({'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc':line['nloc'],'ccn':line['ccn']}]})
         else:
             self.__files.append({
                 'filepath':file_name,
@@ -109,7 +110,7 @@ class SourceCodeInfo:
                         {'filepath':line['basename']+'.h'}
                     ],
                     'classes':[
-                        {'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc:':line['nloc'],'ccn':line['ccn']}
+                        {'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc':line['nloc'],'ccn':line['ccn']}
                         ]}
                     ]
                 }
