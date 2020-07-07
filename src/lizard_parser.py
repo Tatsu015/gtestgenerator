@@ -4,6 +4,7 @@ import re
 import os
 import json
 import parameter
+import filter as obj_filter
 
 def __class_and_function(data):
     if '::' in data:
@@ -54,7 +55,8 @@ def parse(file_path):
     lines = []
     for line in table_data.splitlines():
         obj = __line_to_object(line)
-        lines.append(obj)
+        if obj_filter.is_export(obj):
+            lines.append(obj)
 
     return lines
 

@@ -2,7 +2,6 @@
 
 import json
 import re
-import filter
 
 class _Component:
     def __init__(self):
@@ -19,11 +18,10 @@ class _Component:
             if loop_key is not '':
                 for loop_key_obj in data_obj[loop_key]:
                     t = child.to_code(loop_key_obj)
-                    if filter.is_export(loop_key_obj, data_obj):
-                        for k,v in loop_key_obj.items():
-                            if type(v) == str:
-                                t = t.replace(self._append_val_key(k), v)
-                        tmp = tmp + t
+                    for k,v in loop_key_obj.items():
+                        if type(v) == str:
+                            t = t.replace(self._append_val_key(k), v)
+                    tmp = tmp + t
             else:
                 tmp = child.to_code(data_obj)
 
