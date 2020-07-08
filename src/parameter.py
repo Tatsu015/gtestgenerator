@@ -13,6 +13,7 @@ def load_args():
     parser.add_argument('-d','--destination', type=str,default='testcode',help='Specify the skeleton output destination directory')
     parser.add_argument('--template', type=str,default='./conf/main.template',help='Specify the skeleton template file')
     parser.add_argument('-f','--file', type=str,default='',help='Load parameters from specify file')
+    parser.add_argument('--exclude', type=str,default='',nargs='*',help='Exclude spacify source file name')
 
     args = parser.parse_args()
 
@@ -21,6 +22,7 @@ def load_args():
     __parameter['source'] = args.source
     __parameter['destination'] = args.destination
     __parameter['template'] = args.template
+    __parameter['exclude'] = args.exclude
 
 def get(key):
     return __parameter[key]

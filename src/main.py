@@ -15,3 +15,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+    # f = 'file.*'
+    # p = re.compile(f)
+    # s = '/home/develop/file/test'
+    # m = p.search(s)
+    # print(m)
