@@ -77,7 +77,7 @@ class _Component:
     def _append_val_key(self,s):
         return '${' + s + '}'
 
-def create(filepath):
+def parse(filepath):
     t = _Component()
 
     f = open(filepath, 'r')

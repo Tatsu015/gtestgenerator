@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import lizard_parser as lp
 import generator as g
-import template
+import template_parser as tp
 import parameter
 
 def main():
@@ -10,16 +12,8 @@ def main():
     info = lp.SourceCodeInfo() # TODO will become dir path and generate lizard file and analyze
     js = info.to_json(lines)
 
-    temp = template.create(parameter.get('template'))
-    g.to_testcode(temp,js)
+    template = tp.parse(parameter.get('template'))
+    g.to_testcode(template,js)
 
 if __name__ == "__main__":
     main()
-
-
-
-    # f = 'file.*'
-    # p = re.compile(f)
-    # s = '/home/develop/file/test'
-    # m = p.search(s)
-    # print(m)

@@ -80,10 +80,8 @@ class SourceCodeInfo:
             class_name = line['basename']
         func_name = line['function']
 
-        # filepathes = [d.get('filepath') for d in self.__files]
         hit_files = [x for x in self.__files if x['filepath'] == file_name]
         if len(hit_files) != 0:
-            # classes = [d.get('testdata').get('classes') for d in self.__files][0]
             classes = [d.get('testdata').get('classes') for d in hit_files][0]
             hit_classes = [x for x in classes if x['classname'] == class_name]
             if len(hit_classes) != 0:
