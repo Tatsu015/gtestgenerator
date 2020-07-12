@@ -6,6 +6,19 @@ import json
 import parameter
 import filter as obj_filter
 
+def parse(file_path):
+    f = open(file_path, 'r')
+    table_data = __trimmed(f.read())
+
+    lines = []
+    for line in table_data.splitlines():
+        obj = __line_to_object(line)
+        if obj_filter.is_export(obj):
+            lines.append(obj)
+
+    jsn = __to_code(lines)
+    return jsn
+
 def __class_and_function(data):
     if '::' in data:
         tmp = data.split('::')
@@ -48,74 +61,160 @@ def __trimmed(data):
 
     return table_data[0]
 
-def parse(file_path):
-    f = open(file_path, 'r')
-    table_data = __trimmed(f.read())
+def __to_code(line_objs):
+    root = []
+    for line_obj in line_objs:
+        if not __has_file(root, line_obj):
+            root.append(__to_file(line_obj))
+            continue
 
-    lines = []
-    for line in table_data.splitlines():
-        obj = __line_to_object(line)
-        if obj_filter.is_export(obj):
-            lines.append(obj)
+        classname = line_obj['class']
+        if classname == '':
+            classname = line_obj['basename']
 
-    return lines
+        testdata_obj = __extract_testdata_obj(root, line_obj['path'])
+        classes_obj = __extract_classes_obj(testdata_obj)
+        if not __has_class(classes_obj, classname):
+            classes_obj.append(__to_class(line_obj))
+            continue
 
-class SourceCodeInfo:
-    def __init__(self):
-        self.__files = []
+        class_obj = __extract_class_obj(classes_obj,classname)
+        funcs_obj = __extract_funcs_obj(class_obj, line_obj['function'])
+        if not __has_func(funcs_obj, line_obj['function']):
+            funcs_obj.append(__to_func(line_obj))
+            continue
 
-    def to_json(self, lines):
-        for line in lines:
-            self.__line_to_json(line)
+        funcs_obj.append(__to_overrided_func(funcs_obj,line_obj))
 
-        return self.__files
+    return root
 
-    def __line_to_json(self, line):
-        #　use file basename insted class name
-        # because function (not method) has no class name
-        file_name = line['path']
-        dst_filepath = file_name.replace('.cpp', '_test.cpp').replace('./','./' + parameter.get('destination') + '/')
-        class_name = line['class']
-        if class_name == '':
-            class_name = line['basename']
-        func_name = line['function']
+def __has_file(target_obj, line_obj):
+    filepath = line_obj['path']
+    hit_files = [x for x in target_obj if x['filepath'] == filepath]
+    if hit_files:
+        return True
+    else:
+        return False
 
-        hit_files = [x for x in self.__files if x['filepath'] == file_name]
-        if len(hit_files) != 0:
-            classes = [d.get('testdata').get('classes') for d in hit_files][0]
-            hit_classes = [x for x in classes if x['classname'] == class_name]
-            if len(hit_classes) != 0:
-                cls = hit_classes[0]
-                fncs = [d.get('func') for d in classes][0]
-                fnc = [x for x in fncs if x['funcname'] == func_name]
+def __to_file(line_obj):
+    filepath = line_obj['path']
+    dstfilepath = filepath.replace('.cpp', '_test.cpp').replace('./','./' + parameter.get('destination') + '/')
+    include_filepath = line_obj['basename']+'.h'
 
-                # append suffix index to same function name,
-                # because override function name duplicatable.
-                index = 1
-                str_index = ''
-                while fnc:
-                    index = index + 1
-                    str_index = str(index)
-                    fnc = [x for x in fncs if x['funcname'] == (func_name + str_index)]
+    classname = line_obj['class']
+    if classname == '':
+        classname = line_obj['basename']
 
-                cls['func'].append({'funcname':(func_name + str_index),'body':'','nloc':line['nloc'],'ccn':line['ccn']})
-            else:
-                classes.append({'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc':line['nloc'],'ccn':line['ccn']}]})
-        else:
-            self.__files.append({
-                'filepath':file_name,
-                'dstfilepath':dst_filepath,
+    funcname = line_obj['function']
+    nloc = line_obj['nloc']
+    ccn = line_obj['ccn']
+
+    file_obj = {
+                'filepath':filepath,
+                'dstfilepath':dstfilepath,
                 'testdata':{
                     'includepath':[
-                        {'filepath':line['basename']+'.h'}
+                        {'filepath':include_filepath}
                     ],
                     'classes':[
-                        {'classname':class_name,'func':[{'funcname':line['function'],'body':'','nloc':line['nloc'],'ccn':line['ccn']}
-                        ]}
+                        {
+                            'classname':classname,
+                            'func':[
+                                {
+                                    'funcname':funcname,
+                                    'body':'',
+                                    'nloc':nloc,
+                                    'ccn':ccn
+                                }
+                            ]
+                        }
                     ]
                 }
-            })
+            }
+    return file_obj
 
+def __extract_testdata_obj(target_obj, filepath):
+    hit_files = [x for x in target_obj if x['filepath'] == filepath]
+    if hit_files:
+        return hit_files[0]['testdata']
+    else:
+        return None
 
-    def dump(self):
-        print(json.dumps(self.__files,indent=1))
+def __extract_classes_obj(testdata_obj):
+    return testdata_obj['classes']
+
+def __has_class(classes_obj, classname):
+    hit_classes = [x for x in classes_obj if x['classname'] == classname]
+    if hit_classes:
+        return True
+    else:
+        return False
+
+def __to_class(line_obj):
+    classname = line_obj['class']
+    if classname == '':
+        classname = line_obj['basename']
+
+    obj = {
+        'classname':classname,
+        'func':[
+            {
+                'funcname':line_obj['function'],
+                'body':'',
+                'nloc':line_obj['nloc'],
+                'ccn':line_obj['ccn']
+            }
+        ]
+    }
+
+    return obj
+
+def __extract_class_obj(classes_obj, classname):
+    hit_classes = [x for x in classes_obj if x['classname'] == classname]
+    if hit_classes:
+        return hit_classes[0]
+    else:
+        return None
+
+def __has_func(funcs_obj, funcname):
+    hit_funcs = [x for x in funcs_obj if x['funcname'] == funcname]
+    if hit_funcs:
+        return True
+    else:
+        return False
+
+def __to_func(line_obj):
+    obj = {
+        'funcname':line_obj['function'],
+        'body':'',
+        'nloc':line_obj['nloc'],
+        'ccn':line_obj['ccn']
+    }
+
+    return obj
+
+def __to_overrided_func(funcs_obj, line_obj):
+    func_name = line_obj['function']
+
+    func_obj = [x for x in funcs_obj if x['funcname'] == func_name]
+
+    # append suffix index to same function name,
+    # because override function name duplicatable.
+    index = 1
+    str_index = ''
+    while func_obj:
+        index = index + 1
+        str_index = str(index)
+        func_obj = [x for x in funcs_obj if x['funcname'] == (func_name + str_index)]
+
+    obj = {
+        'funcname':(func_name + str_index),
+        'body':'',
+        'nloc':line_obj['nloc'],
+        'ccn':line_obj['ccn']
+    }
+
+    return obj
+
+def __extract_funcs_obj(class_obj, funcname):
+    return class_obj['func']

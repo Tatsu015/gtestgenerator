@@ -14,7 +14,7 @@ def is_export(data_obj):
     if __is_main_function(data_obj):
         return False
 
-    if __is_exclude(data_obj):
+    if not __is_exclude(data_obj):
         return False
 
     if data_obj['ccn'] < parameter.get('ccn'):
