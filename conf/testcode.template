@@ -11,11 +11,15 @@ using namespace ::testing;
 
 $$FOREACH ${classes}
 class ${classname}_test : public ::testing::Test {
+$$IF ${merge}
 protected:
   virtual void SetUp() {
   }
   virtual void TearDown() {
   }
+$$ELSE
+${body}
+$$END ${merge}
 };
 
 $$FOREACH ${func}

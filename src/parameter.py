@@ -11,7 +11,7 @@ def load_args():
     parser.add_argument('--nloc', type=int,default=0,help='Generate skeletons only for functions greater than the specified line count')
     parser.add_argument('-s','--source', type=str,default='.',help='Specify the source code directory for skeleton generation')
     parser.add_argument('-d','--destination', type=str,default='testcode',help='Specify the skeleton output destination directory')
-    parser.add_argument('--template', type=str,default='./conf/main.template',help='Specify the skeleton template file')
+    parser.add_argument('--template', type=str,default='./conf/testcode.template',help='Specify the skeleton template file')
     parser.add_argument('-f','--file', type=str,default='',help='Load parameters from specify file')
     parser.add_argument('--exclude', type=str,default='',nargs='*',help='Exclude spacify source file name')
 

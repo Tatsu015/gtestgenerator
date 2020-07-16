@@ -119,6 +119,7 @@ def __to_file(line_obj):
                     'classes':[
                         {
                             'classname':classname,
+                            'fixturebody':'',
                             'func':[
                                 {
                                     'funcname':funcname,
@@ -157,6 +158,7 @@ def __to_class(line_obj):
 
     obj = {
         'classname':classname,
+        'fixturebody':'',
         'func':[
             {
                 'funcname':line_obj['function'],

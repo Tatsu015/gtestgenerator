@@ -2,13 +2,19 @@
 
 import json
 import os
+import template_parser as tp
 
-def to_testcode(template,data_objects):
+def to_testcode(template_tokens,data_objects):
     for data_object in data_objects:
         dstfilepath = data_object["dstfilepath"]
-        dstdirpath = os.path.dirname(dstfilepath)
-        os.makedirs(dstdirpath, exist_ok=True)
+        already_exist = os.path.isfile(dstfilepath)
+        need_merge = False
+        if already_exist:
+            need_merge = True
+        else:
+            dstdirpath = os.path.dirname(dstfilepath)
+            os.makedirs(dstdirpath, exist_ok=True)
 
         out = open(dstfilepath,mode='w')
-        d = template.to_code(data_object["testdata"])
+        d = tp.to_code(template_tokens, data_object["testdata"], need_merge)
         out.write(d)

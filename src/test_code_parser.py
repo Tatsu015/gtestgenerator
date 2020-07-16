@@ -3,27 +3,25 @@
 import os
 import re
 
-def parse(dirpath):
-    pass
-
 def parse_file(filepath):
     f = open(filepath, 'r')
     d = f.read()
     root_obj = {}
 
+    root_obj['filepath'] = '' # TODO
     root_obj['dstfilepath'] = filepath
-    root_obj['testdata'] = parse_testdata(d)
+    root_obj['testdata'] = __parse_testdata(d)
 
     return root_obj
 
-def parse_testdata(testdata):
+def __parse_testdata(testdata):
     testdata_obj = {}
-    testdata_obj['includepath'] = parse_includepath(testdata)
-    testdata_obj['classes'] = parse_classes(testdata)
+    testdata_obj['includepath'] = __parse_includepath(testdata)
+    testdata_obj['classes'] = ____parse_classes(testdata)
 
     return testdata_obj
 
-def parse_includepath(testdata):
+def __parse_includepath(testdata):
     includefiles_obj = []
     for includefile in __extract_includefiles(testdata):
         filepath_obj = {'filepath':includefile}
@@ -31,27 +29,29 @@ def parse_includepath(testdata):
 
     return includefiles_obj
 
-def parse_classes(testdata):
+def ____parse_classes(testdata):
     classes_obj = []
     for testfixture in __extract_testfixtures(testdata):
-        classes_obj.append(parse_class(testfixture))
+        classes_obj.append(__parse_class(testfixture))
 
     return classes_obj
 
-def parse_class(testfixture):
+def __parse_class(testfixture):
     class_obj = {}
     class_obj['classname'] = __extract_class_name(testfixture)
     class_obj['fixturebody'] = __extract_testfixture_class_body(testfixture)
-    class_obj['func'] = parse_functions(testfixture)
+    class_obj['func'] = __parse_functions(testfixture)
 
     return class_obj
 
-def parse_functions(testfixture):
+def __parse_functions(testfixture):
     func_objs = []
     for testcase in __extract_testcases(testfixture):
         func_obj = {
             'funcname':__extract_test_name(testcase),
-            'body':__extract_test_body(testcase)
+            'body':__extract_test_body(testcase),
+            'nloc':'',
+            'ccn':''
         }
         func_objs.append(func_obj)
 
@@ -99,7 +99,7 @@ def __extract_test_body(testcase):
     match_body = re_body.search(testcase)
     return match_body.group()
 
-# s = '/home/southeast/workspace/Python/gtestgenerator/test/stringutil_test.cpp'
-# fs = parse_file(s)
-# print(fs)
+s = '/home/southeast/workspace/Python/gtestgenerator/test/stringutil_test.cpp'
+fs = parse_file(s)
+print(fs)
 

@@ -7,13 +7,9 @@ import parameter
 
 def main():
     parameter.load_args()
-
-
     js = lp.parse('test/test.lizard')
-    print(js)
-
-    # template = tp.parse(parameter.get('template'))
-    # g.to_testcode(template,js)
+    template_tokens = tp.parse(parameter.get('template'))
+    g.to_testcode(template_tokens,js)
 
 if __name__ == "__main__":
     main()

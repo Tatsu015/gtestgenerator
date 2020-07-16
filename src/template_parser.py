@@ -3,85 +3,118 @@
 import json
 import re
 
-class _Component:
+class _Token:
     def __init__(self):
-        self.__loop_key = ''
-        self.__body = ''
-        self.__childlen = []
-
-    def to_code(self,data_obj):
-        buf = self.__body
-
-        for child in self.__childlen:
-            loop_key = child.__loop_key
-            tmp = ''
-            if loop_key is not '':
-                for loop_key_obj in data_obj[loop_key]:
-                    t = child.to_code(loop_key_obj)
-                    for k,v in loop_key_obj.items():
-                        if type(v) == str:
-                            t = t.replace(self._append_val_key(k), v)
-                    tmp = tmp + t
-            else:
-                tmp = child.to_code(data_obj)
-
-            buf = buf + tmp
-
-        return buf
-
-    def analyze(self,data_obj):
-        remain_obj = data_obj
-        while remain_obj is not '':
-            splited_obj = self.__split_loop_keyword(remain_obj)
-            if splited_obj["before"] is not '':
-                if self.__loop_key is not '':
-                    self.__body = splited_obj["before"]
-                else:
-                    c = _Component()
-                    c.__body = splited_obj["before"]
-                    self.__childlen.append(c)
-
-            if splited_obj["target"] is not '':
-                c = _Component()
-                c.analyze(splited_obj["target"])
-                c.__loop_key = splited_obj["key"]
-                self.__childlen.append(c)
-
-            remain_obj = splited_obj["after"]
-
-    def __split_loop_keyword(self, s):
-        LOOP_KEY = "$$FOREACH"
-        before_loop = re.search(re.escape(LOOP_KEY) + r'.*', s)
-        if before_loop is None:
-            return {
-            "before":s,
-            "target":'',
-            "after":''
-            }
-
-        key = before_loop.group().split(' ')[1]
-
-        after_loop = s[before_loop.end():]
-        after_next = re.search(r'\$\$NEXT ' + re.escape(key), after_loop)
-
-        return {
-            "key":self._strip_val_key(key),
-            "before":s[:before_loop.start()],
-            "target":after_loop[1: after_next.start()],
-            "after":after_loop[after_next.end():].rstrip()
-            }
-
-    def _strip_val_key(self,s):
-        return s.replace('$','').replace('{','').replace('}','')
+        pass
 
     def _append_val_key(self,s):
         return '${' + s + '}'
 
+    def _strip_val_key(self,s):
+        return s.replace('$','').replace('{','').replace('}','')
+
+    def _replace_str_datas(self, s, data_obj):
+        tmp = s
+        for k,v in data_obj.items():
+            if type(v) is str:
+                tmp = tmp.replace(self._append_val_key(k), v)
+        return tmp
+
+class _LeafToken(_Token):
+    def __init__(self, data):
+        super().__init__()
+        self.__data = data
+
+    def to_code(self, data_obj):
+        d = self.__data
+        d = self._replace_str_datas(d, data_obj)
+        return d
+
+class _IfToken(_Token):
+    def __init__(self, condition, true_child_token, false_child_token):
+        super().__init__()
+        self.__condition = condition
+        self.__true_child_token = true_child_token
+        self.__false_child_token = false_child_token
+
+    def to_code(self, data_obj):
+        d = ''
+        child = None
+        if self.__condition:
+            child = self.__true_child_token
+        else:
+            child = self.__false_child_token
+
+        d = child.to_code(data_obj)
+        d = self._replace_str_datas(d, data_obj)
+        return d
+
+class _ForeachToken(_Token):
+    def __init__(self, condition, children):
+        super().__init__()
+        self.__condition = condition
+        self.__children = children
+
+    def to_code(self, data_obj):
+        d = ''
+        condition = self._strip_val_key(self.__condition)
+        for i in data_obj[condition]:
+            for child in self.__children:
+                d = d + child.to_code(i)
+
+        d = self._replace_str_datas(d, data_obj)
+        return d
+
 def parse(filepath):
-    t = _Component()
+    # TODO this tokens will read from main.template
+    tokens = [
+        _LeafToken(
+            '#include <gtest/gtest.h>\n'
+            '\n'
+            '#define private public\n'
+            '#define protected public\n\n'
+        ),
+        _ForeachToken(
+            '${includepath}', [_LeafToken('#include "${filepath}"')]
+        ),
+        _LeafToken(
+            '\n'
+            'using namespace ::testing;\n'
+            '\n'
+        ),
+        _ForeachToken('${classes}', [
+            _LeafToken(
+                'class ${classname}_test : public ::testing::Test {\n'
+            ),
+            _IfToken(
+                True,
+                _LeafToken(
+                    'protected:\n'
+                    '  virtual void SetUp() {\n'
+                    '  }\n'
+                    '  virtual void TearDown() {\n'
+                    '  }\n'
+                ),
+                _LeafToken(
+                    'protected:\n'
+                    '${body}\n'
+                )
+            ),
+            _LeafToken(
+                '};\n\n'
+            ),
+            _ForeachToken('${func}', [
+                _LeafToken(
+                    'TEST(${classname}_test, ${funcname}) {\n'
+                    '}\n\n'
+                )
+            ])
+        ])
+    ]
+    return tokens
 
-    f = open(filepath, 'r')
-    d = f.read()
-    t.analyze(d)
-
-    return t
+def to_code(tokens, data_obj, merge):
+    d = ''
+    for t in tokens:
+        d = d + t.to_code(data_obj)
+    return d
