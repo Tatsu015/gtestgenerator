@@ -92,14 +92,9 @@ def __extract_testcases(testfixture):
 def __extract_test_name(testcase):
     re_name = re.compile(r'(?<=\()[^\(\)]+(?=\))')
     match_names = re_name.search(testcase)
-    return match_names.group().split(',')[1]
+    return match_names.group().split(',')[1].strip()
 
 def __extract_test_body(testcase):
     re_body = re.compile(r'(?<=\{).+(?=\})', flags=(re.MULTILINE | re.DOTALL))
     match_body = re_body.search(testcase)
     return match_body.group()
-
-s = '/home/southeast/workspace/Python/gtestgenerator/test/stringutil_test.cpp'
-fs = parse_file(s)
-print(fs)
-

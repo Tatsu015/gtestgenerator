@@ -87,7 +87,7 @@ def parse(filepath):
                 'class ${classname}_test : public ::testing::Test {\n'
             ),
             _IfToken(
-                True,
+                False,
                 _LeafToken(
                     'protected:\n'
                     '  virtual void SetUp() {\n'
@@ -104,9 +104,17 @@ def parse(filepath):
                 '};\n\n'
             ),
             _ForeachToken('${func}', [
-                _LeafToken(
-                    'TEST(${classname}_test, ${funcname}) {\n'
-                    '}\n\n'
+                _IfToken(
+                    True,
+                    _LeafToken(
+                        'TEST(${classname}_test, ${funcname}) {\n'
+                        '}\n\n'
+                    ),
+                    _LeafToken(
+                        'TEST(${classname}_test, ${funcname}) {\n'
+                        '${body}\n'
+                        '}\n\n'
+                    )
                 )
             ])
         ])
