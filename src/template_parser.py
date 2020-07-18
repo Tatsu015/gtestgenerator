@@ -2,6 +2,8 @@
 
 import json
 import re
+import merge
+import condition
 
 class _Token:
     def __init__(self):
@@ -40,11 +42,10 @@ class _IfToken(_Token):
     def to_code(self, data_obj):
         d = ''
         child = None
-        if self.__condition:
-            child = self.__true_child_token
-        else:
+        if self.__condition.check(data_obj):
             child = self.__false_child_token
-
+        else:
+            child = self.__true_child_token
         d = child.to_code(data_obj)
         d = self._replace_str_datas(d, data_obj)
         return d
@@ -87,7 +88,7 @@ def parse(filepath):
                 'class ${classname}_test : public ::testing::Test {\n'
             ),
             _IfToken(
-                False,
+                condition.MergeCondition(),
                 _LeafToken(
                     'protected:\n'
                     '  virtual void SetUp() {\n'
@@ -104,7 +105,7 @@ def parse(filepath):
             ),
             _ForeachToken('${func}', [
                 _IfToken(
-                    False,
+                    condition.MergeCondition(),
                     _LeafToken(
                         'TEST(${classname}_test, ${funcname}) {\n'
                         '}\n\n'
@@ -120,7 +121,7 @@ def parse(filepath):
     ]
     return tokens
 
-def to_code(tokens, data_obj, merge):
+def to_code(tokens, data_obj):
     d = ''
     for t in tokens:
         d = d + t.to_code(data_obj)
