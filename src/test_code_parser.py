@@ -95,6 +95,20 @@ def __extract_test_name(testcase):
     return match_names.group().split(',')[1].strip()
 
 def __extract_test_body(testcase):
-    re_body = re.compile(r'(?<=\{).+(?=\})', flags=(re.MULTILINE | re.DOTALL))
-    match_body = re_body.search(testcase)
-    return match_body.group()
+    tmp = re.sub(r'\(.*\)', '', testcase).strip()
+    if len(tmp) < 3:
+        print('error : Too less character in test body text!')
+        return ''
+    if tmp[0] == '{' and tmp[1] == '\n':
+        tmp = tmp[2:]
+    if tmp[-1] == '}':
+        tmp = tmp[:-1]
+    return tmp
+
+
+
+# s = '(main_test, createParser) {\n}'
+# d = __extract_test_body(s)
+# print('========')
+# print(d)
+# print('--------')
