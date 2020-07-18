@@ -81,7 +81,7 @@ def __extract_class_name(testfixture):
     return tmp
 
 def __extract_testfixture_class_body(testfixture):
-    re_body = re.compile(r'(?<=\{).+(?=\})', flags=(re.MULTILINE | re.DOTALL))
+    re_body = re.compile(r'(?<=\{\n).+(?=\n^\};)', flags=(re.MULTILINE | re.DOTALL))
     match_body = re_body.search(testfixture)
     return match_body.group()
 
