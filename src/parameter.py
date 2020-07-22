@@ -62,7 +62,7 @@ def __setup_argument():
     parser.add_argument(
         '--template',
         type=str,
-        default=os.path.dirname(__file__) + '/../conf/testcode.template',
+        default='../conf/testcode.template',
         help='Specify the skeleton template file')
 
     parser.add_argument(
