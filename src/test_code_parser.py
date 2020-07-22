@@ -8,7 +8,7 @@ def parse_file(filepath):
     d = f.read()
     root_obj = {}
 
-    root_obj['filepath'] = '' # TODO
+    root_obj['filepath'] = ''
     root_obj['dstfilepath'] = filepath
     root_obj['testdata'] = __parse_testdata(d)
 
@@ -104,11 +104,3 @@ def __extract_test_body(testcase):
     if tmp[-1] == '}':
         tmp = tmp[:-1]
     return tmp
-
-
-
-# s = '(main_test, createParser) {\n}'
-# d = __extract_test_body(s)
-# print('========')
-# print(d)
-# print('--------')

@@ -5,10 +5,11 @@ import os
 import json
 import parameter
 import filter as obj_filter
+import subprocess
 
-def parse(file_path):
-    f = open(file_path, 'r')
-    table_data = __trimmed(f.read())
+def parse(path):
+    res = subprocess.check_output(['lizard', path])
+    table_data = __extract_function_part(res.decode())
 
     lines = []
     for line in table_data.splitlines():
@@ -54,7 +55,7 @@ def __line_to_object(line):
 
     return obj
 
-def __trimmed(data):
+def __extract_function_part(data):
     DERIMITA = '-----------------------------------\n'
     tmp = data.split(DERIMITA)
     table_data = re.split(r"\d+ file analyzed.", tmp[1])

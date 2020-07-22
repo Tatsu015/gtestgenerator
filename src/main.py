@@ -7,7 +7,7 @@ import parameter
 
 def main():
     parameter.load_args()
-    js = lp.parse('test/test.lizard')
+    js = lp.parse(parameter.get('source'))
     template_tokens = tp.parse(parameter.get('template'))
     g.to_testcode(template_tokens,js)
 

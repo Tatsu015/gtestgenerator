@@ -3,10 +3,34 @@
 import os
 import json
 import argparse
+import pathlib
 
 __parameter = {}
 
+def get(key):
+    global __parameter
+    return __parameter[key]
+
 def load_args():
+    args = __setup_argument()
+    __setup_default_parameter(args)
+
+    if args.init:
+        __export_default_config()
+        exit(0)
+
+    path = __find_config(os.getcwd())
+    if path:
+        f = open(path, 'r')
+        global __parameter
+        j = f.read()
+        __parameter = json.loads(j)
+    else:
+        print('Cannot find .gigconfig file. Use default value.')
+
+
+
+def __setup_argument():
     parser = argparse.ArgumentParser(description='Automatically generate google test skeleton from c++ source code')
 
     parser.add_argument(
@@ -38,7 +62,7 @@ def load_args():
     parser.add_argument(
         '--template',
         type=str,
-        default=os.path.dirname(__file__) + '../conf/testcode.template',
+        default=os.path.dirname(__file__) + '/../conf/testcode.template',
         help='Specify the skeleton template file')
 
     parser.add_argument(
@@ -61,7 +85,10 @@ def load_args():
         action='store_true')
 
     args = parser.parse_args()
+    return args
 
+def __setup_default_parameter(args):
+    global __parameter
     __parameter['ccn'] = args.ccn
     __parameter['nloc'] = args.nloc
     __parameter['source'] = args.source
@@ -69,21 +96,31 @@ def load_args():
     __parameter['template'] = args.template
     __parameter['exclude'] = args.exclude
 
-    if args.init:
-        f = open('.gtgconfig','w')
-        parameter = {
-            'ccn':__parameter['ccn'],
-            'nloc':__parameter['nloc'],
-            'source':__parameter['source'],
-            'destination':__parameter['destination'],
-            'template':__parameter['template'],
-            'exclude':__parameter['exclude']
-        }
-        json.dump(parameter, f, indent=4)
-        exit(0)
+def __export_default_config():
+    global __parameter
+    f = open('.gtgconfig','w')
+    parameter = {
+        'ccn':__parameter['ccn'],
+        'nloc':__parameter['nloc'],
+        'source':__parameter['source'],
+        'destination':__parameter['destination'],
+        'template':__parameter['template'],
+        'exclude':__parameter['exclude']
+    }
+    json.dump(parameter, f, indent=4)
 
-def get(key):
-    return __parameter[key]
 
-def parse_file(filepath):
-    pass
+def __find_config(currentpath):
+    pos = currentpath.rfind('/')
+
+    while pos != 0:
+        configpath = currentpath + '/.gtgconfig'
+        if os.path.exists(configpath):
+            return configpath
+
+        currentpath = currentpath[:pos]
+        pos = currentpath.rfind('/')
+
+
+    return ''
+
