@@ -5,8 +5,17 @@ import os
 from gtestgenerator import template_parser as tp
 from gtestgenerator import test_code_parser as tcp
 from gtestgenerator import merge as mg
+from gtestgenerator import lizard_parser as lp
+from gtestgenerator import parameter
 
-def to_testcode(template_tokens,data_objects):
+
+def execute():
+    parameter.load_args()
+    js = lp.parse(parameter.get('source'))
+    template_tokens = tp.parse(parameter.get('template'))
+    __to_testcode(template_tokens,js)
+
+def __to_testcode(template_tokens,data_objects):
     for data_object in data_objects:
         dstfilepath = data_object["dstfilepath"]
         already_exist = os.path.isfile(dstfilepath)

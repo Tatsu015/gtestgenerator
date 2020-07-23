@@ -23,12 +23,12 @@ def load_args():
     if path:
         f = open(path, 'r')
         global __parameter
-        j = f.read()
-        __parameter = json.loads(j)
+        __parameter = json.loads(f.read())
     else:
         print('Cannot find .gigconfig file. Use default value.')
 
-
+    if args.debug:
+        print(__parameter)
 
 def __setup_argument():
     parser = argparse.ArgumentParser(description='Automatically generate google test skeleton from c++ source code')
@@ -82,6 +82,11 @@ def __setup_argument():
         '-i',
         '--init',
         help='Generate google test generator config file',
+        action='store_true')
+
+    parser.add_argument(
+        '--debug',
+        help='ddddddddddd',
         action='store_true')
 
     args = parser.parse_args()
