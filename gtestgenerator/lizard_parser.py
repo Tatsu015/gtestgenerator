@@ -4,6 +4,7 @@ import re
 import os
 import json
 import subprocess
+import lizard
 from gtestgenerator import parameter
 from gtestgenerator import filter as obj_filter
 

@@ -8,8 +8,5 @@ setup(
     author_email='',
     url='https://bitbucket.org/s_tatsu/gtestgenerator.git',
     packages=find_packages(),
-        entry_points="""
-      [console_scripts]
-      gtestgenerator = gtestgenerator.gtestgenerator:main
-    """,
+    entry_points={'console_scripts': ['gtestgenerator = gtestgenerator.gtestgenerator:main']},
 )
