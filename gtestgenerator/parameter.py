@@ -62,7 +62,7 @@ def __setup_argument():
     parser.add_argument(
         '--template',
         type=str,
-        default='../conf/testcode.template',
+        default='../etc/gtestgenerator/testcode.template',
         help='Specify the skeleton template file')
 
     parser.add_argument(
@@ -86,7 +86,7 @@ def __setup_argument():
 
     parser.add_argument(
         '--debug',
-        help='ddddddddddd',
+        help='Show debug infomation',
         action='store_true')
 
     args = parser.parse_args()
