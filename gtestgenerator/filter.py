@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import json
-import parameter
 import re
+from gtestgenerator import parameter
 
 def is_export(data_obj):
     if __is_constructor(data_obj):

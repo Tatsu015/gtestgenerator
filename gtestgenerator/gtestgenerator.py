@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import lizard_parser as lp
-import generator as g
-import template_parser as tp
-import parameter
+from gtestgenerator import lizard_parser as lp
+from gtestgenerator import generator as g
+from gtestgenerator import template_parser as tp
+from gtestgenerator import parameter
 
 def main():
     parameter.load_args()

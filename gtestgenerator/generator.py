@@ -2,9 +2,9 @@
 
 import json
 import os
-import template_parser as tp
-import test_code_parser as tcp
-import merge as mg
+from gtestgenerator import template_parser as tp
+from gtestgenerator import test_code_parser as tcp
+from gtestgenerator import merge as mg
 
 def to_testcode(template_tokens,data_objects):
     for data_object in data_objects:

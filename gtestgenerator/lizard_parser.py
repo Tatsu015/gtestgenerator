@@ -3,9 +3,9 @@
 import re
 import os
 import json
-import parameter
-import filter as obj_filter
 import subprocess
+from gtestgenerator import parameter
+from gtestgenerator import filter as obj_filter
 
 def parse(path):
     res = subprocess.check_output(['lizard', path])
