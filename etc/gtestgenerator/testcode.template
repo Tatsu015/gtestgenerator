@@ -3,9 +3,9 @@
 #define private public
 #define protected public
 
-$$FOREACH ${includepath}
+$$FOREACH ${includepaths}
 #include ${filepath}
-$$NEXT ${includepath}
+$$NEXT ${includepaths}
 
 using namespace ::testing;
 
@@ -18,13 +18,13 @@ protected:
   virtual void TearDown() {
   }
 $$ELSE
-${body}
+${fixturebody}
 $$END ${merge}
 };
 
-$$FOREACH ${func}
-TEST(${classname}_test, ${funcname}) {
+$$FOREACH ${functions}
+TEST(${classname}_test, ${functionname}) {
 }
 
-$$NEXT ${func}
+$$NEXT ${functions}
 $$NEXT ${classes}

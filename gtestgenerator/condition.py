@@ -17,8 +17,8 @@ class MergeCondition(AbstractCondition):
                 return True
             else:
                 return False
-        if 'funcname' in data_obj:
-            if len(data_obj['body']) > 0:
+        if 'functionname' in data_obj:
+            if len(data_obj['testbody']) > 0:
                 return True
             else:
                 return False

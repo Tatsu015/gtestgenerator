@@ -6,7 +6,7 @@ import json
 import subprocess
 import lizard
 from gtestgenerator import parameter
-from gtestgenerator import filter as obj_filter
+from gtestgenerator import filter as flt
 
 def parse(path):
     res = subprocess.check_output(['lizard', path])
@@ -15,7 +15,7 @@ def parse(path):
     lines = []
     for line in table_data.splitlines():
         obj = __line_to_object(line)
-        if obj_filter.is_export(obj):
+        if flt.is_export(obj):
             lines.append(obj)
 
     jsn = __to_code(lines)
@@ -24,9 +24,9 @@ def parse(path):
 def __class_and_function(data):
     if '::' in data:
         tmp = data.split('::')
-        return {'class':tmp[0], 'function':tmp[1]}
+        return {'class':tmp[0], 'functions':tmp[1]}
     else:
-        return {'class':'', 'function':data}
+        return {'class':'', 'functions':data}
 
 def __basename(path):
     tmp = os.path.basename(path)
@@ -47,7 +47,7 @@ def __line_to_object(line):
         'param':int(elms[3]),
         'length':int(elms[4]),
         'class':cls_and_func['class'],
-        'function':cls_and_func['function'],
+        'functions':cls_and_func['functions'],
         'startline':lineinfos[0],
         'endline':lineinfos[1],
         'path':locationElms[2],
@@ -81,8 +81,8 @@ def __to_code(line_objs):
             continue
 
         class_obj = __extract_class_obj(classes_obj,classname)
-        funcs_obj = __extract_funcs_obj(class_obj, line_obj['function'])
-        if not __has_func(funcs_obj, line_obj['function']):
+        funcs_obj = __extract_funcs_obj(class_obj, line_obj['functions'])
+        if not __has_func(funcs_obj, line_obj['functions']):
             funcs_obj.append(__to_func(line_obj))
             continue
 
@@ -109,7 +109,7 @@ def __to_file(line_obj):
     if classname == '':
         classname = line_obj['basename']
 
-    funcname = line_obj['function']
+    funcname = line_obj['functions']
     nloc = line_obj['nloc']
     ccn = line_obj['ccn']
 
@@ -117,17 +117,17 @@ def __to_file(line_obj):
                 'filepath':filepath,
                 'dstfilepath':dstfilepath,
                 'testdata':{
-                    'includepath':[
+                    'includepaths':[
                         {'filepath':include_filepath}
                     ],
                     'classes':[
                         {
                             'classname':classname,
                             'fixturebody':'',
-                            'func':[
+                            'functions':[
                                 {
-                                    'funcname':funcname,
-                                    'body':'',
+                                    'functionname':funcname,
+                                    'testbody':'',
                                     'nloc':nloc,
                                     'ccn':ccn
                                 }
@@ -163,10 +163,10 @@ def __to_class(line_obj):
     obj = {
         'classname':classname,
         'fixturebody':'',
-        'func':[
+        'functions':[
             {
-                'funcname':line_obj['function'],
-                'body':'',
+                'functionname':line_obj['functions'],
+                'testbody':'',
                 'nloc':line_obj['nloc'],
                 'ccn':line_obj['ccn']
             }
@@ -183,7 +183,7 @@ def __extract_class_obj(classes_obj, classname):
         return None
 
 def __has_func(funcs_obj, funcname):
-    hit_funcs = [x for x in funcs_obj if x['funcname'] == funcname]
+    hit_funcs = [x for x in funcs_obj if x['functionname'] == funcname]
     if hit_funcs:
         return True
     else:
@@ -191,8 +191,8 @@ def __has_func(funcs_obj, funcname):
 
 def __to_func(line_obj):
     obj = {
-        'funcname':line_obj['function'],
-        'body':'',
+        'functionname':line_obj['functions'],
+        'testbody':'',
         'nloc':line_obj['nloc'],
         'ccn':line_obj['ccn']
     }
@@ -200,9 +200,9 @@ def __to_func(line_obj):
     return obj
 
 def __to_overrided_func(funcs_obj, line_obj):
-    func_name = line_obj['function']
+    func_name = line_obj['functions']
 
-    func_obj = [x for x in funcs_obj if x['funcname'] == func_name]
+    func_obj = [x for x in funcs_obj if x['functionname'] == func_name]
 
     # append suffix index to same function name,
     # because override function name duplicatable.
@@ -211,11 +211,11 @@ def __to_overrided_func(funcs_obj, line_obj):
     while func_obj:
         index = index + 1
         str_index = str(index)
-        func_obj = [x for x in funcs_obj if x['funcname'] == (func_name + str_index)]
+        func_obj = [x for x in funcs_obj if x['functionname'] == (func_name + str_index)]
 
     obj = {
-        'funcname':(func_name + str_index),
-        'body':'',
+        'functionname':(func_name + str_index),
+        'testbody':'',
         'nloc':line_obj['nloc'],
         'ccn':line_obj['ccn']
     }
@@ -223,4 +223,4 @@ def __to_overrided_func(funcs_obj, line_obj):
     return obj
 
 def __extract_funcs_obj(class_obj, funcname):
-    return class_obj['func']
+    return class_obj['functions']

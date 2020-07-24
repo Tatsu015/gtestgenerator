@@ -34,16 +34,10 @@ def __setup_argument():
     parser = argparse.ArgumentParser(description='Automatically generate google test skeleton from c++ source code')
 
     parser.add_argument(
-        '--ccn',
-        type=int,
-        default=0,
-        help='Generate skeletons only for functions greater than the specified cyclomatic complexity')
-
-    parser.add_argument(
-        '--nloc',
-        type=int,
-        default=0,
-        help='Generate skeletons only for functions greater than the specified line count')
+        '-i',
+        '--init',
+        help='Generate google test generator config file',
+        action='store_true')
 
     parser.add_argument(
         '-s',
@@ -58,6 +52,18 @@ def __setup_argument():
         type=str,
         default='testcode',
         help='Specify the skeleton output destination directory')
+
+    parser.add_argument(
+        '--ccn',
+        type=int,
+        default=0,
+        help='Generate skeletons only for functions greater than the specified cyclomatic complexity')
+
+    parser.add_argument(
+        '--nloc',
+        type=int,
+        default=0,
+        help='Generate skeletons only for functions greater than the specified line count')
 
     parser.add_argument(
         '--template',
@@ -77,12 +83,6 @@ def __setup_argument():
         default='',
         nargs='*',
         help='Exclude spacify source file name')
-
-    parser.add_argument(
-        '-i',
-        '--init',
-        help='Generate google test generator config file',
-        action='store_true')
 
     parser.add_argument(
         '--debug',

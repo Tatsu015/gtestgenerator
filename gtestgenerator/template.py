@@ -76,7 +76,7 @@ def parse(filepath):
             '#define protected public\n\n'
         ),
         _ForeachToken(
-            '${includepath}', [_LeafToken('#include "${filepath}"')]
+            '${includepaths}', [_LeafToken('#include "${filepath}"')]
         ),
         _LeafToken(
             '\n'
@@ -103,16 +103,16 @@ def parse(filepath):
             _LeafToken(
                 '};\n\n'
             ),
-            _ForeachToken('${func}', [
+            _ForeachToken('${functions}', [
                 _IfToken(
                     condition.MergeCondition(),
                     _LeafToken(
-                        'TEST(${classname}_test, ${funcname}) {\n'
+                        'TEST(${classname}_test, ${functionname}) {\n'
                         '}\n\n'
                     ),
                     _LeafToken(
-                        'TEST(${classname}_test, ${funcname}) {\n'
-                        '${body}'
+                        'TEST(${classname}_test, ${functionname}) {\n'
+                        '${testbody}'
                         '}\n\n'
                     )
                 )

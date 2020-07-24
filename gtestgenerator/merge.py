@@ -11,7 +11,7 @@ def merge(new_data_obj, old_data_obj):
 
 def __merge_testdata(new_testdata_obj, old_testdata_obj):
     merged_obj = {}
-    merged_obj['includepath'] = old_testdata_obj['includepath']
+    merged_obj['includepaths'] = old_testdata_obj['includepaths']
     merged_obj['classes'] = __merge_classes(new_testdata_obj['classes'], old_testdata_obj['classes'])
     return merged_obj
 
@@ -34,14 +34,14 @@ def __merge_class(new_class_obj, old_class_obj):
     merged_obj = {}
     merged_obj['classname'] = new_class_obj['classname']
     merged_obj['fixturebody'] = old_class_obj['fixturebody']
-    merged_obj['func'] = __merge_functions(new_class_obj['func'], old_class_obj['func'])
+    merged_obj['functions'] = __merge_functions(new_class_obj['functions'], old_class_obj['functions'])
     return merged_obj
 
 def __merge_functions(new_functions_obj, old_functions_obj):
     merged_objs = []
     for new_function_obj in new_functions_obj:
-        funcname = new_function_obj['funcname']
-        tmp = [x for x in old_functions_obj if x['funcname'] == funcname]
+        funcname = new_function_obj['functionname']
+        tmp = [x for x in old_functions_obj if x['functionname'] == funcname]
         # old functions already has new function
         if tmp:
             old_function_obj = tmp[0]
@@ -54,8 +54,8 @@ def __merge_functions(new_functions_obj, old_functions_obj):
 
 def __merge_function(new_function_obj, old_function_obj):
     merged_obj = {}
-    merged_obj['funcname'] = new_function_obj['funcname']
-    merged_obj['body'] = old_function_obj['body']
+    merged_obj['functionname'] = new_function_obj['functionname']
+    merged_obj['testbody'] = old_function_obj['testbody']
     merged_obj['nloc'] = new_function_obj['nloc']
     merged_obj['ccn'] = new_function_obj['ccn']
     return merged_obj
