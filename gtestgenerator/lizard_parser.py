@@ -100,7 +100,9 @@ def __has_file(target_obj, line_obj):
 
 def __to_file(line_obj):
     filepath = line_obj['path']
-    dstfilepath = filepath.replace('.cpp', '_test.cpp').replace('./','./' + parameter.get('destination') + '/')
+    src = parameter.get('source').replace('./', '')
+    dst = parameter.get('destination').replace('./', '')
+    dstfilepath = filepath.replace('.cpp', '_test.cpp').replace(src, dst)
     include_filepath = line_obj['basename']+'.h'
 
     classname = line_obj['class']

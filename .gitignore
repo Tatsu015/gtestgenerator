@@ -1,6 +1,6 @@
 .vscode/
 testcode/
-src/__pycache__
+*__pycache__
 .gtgconfig
 dist/
 gtestgenerator.egg-info/
