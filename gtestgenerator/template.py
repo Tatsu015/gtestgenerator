@@ -79,7 +79,7 @@ def parse(filepath):
             '${includepaths}', [_LeafToken('#include "${filepath}"')]
         ),
         _LeafToken(
-            '\n'
+            '\n\n'
             'using namespace ::testing;\n'
             '\n'
         ),
@@ -107,11 +107,11 @@ def parse(filepath):
                 _IfToken(
                     condition.MergeCondition(),
                     _LeafToken(
-                        'TEST(${classname}_test, ${functionname}) {\n'
+                        'TEST_F(${classname}_test, ${functionname}) {\n'
                         '}\n\n'
                     ),
                     _LeafToken(
-                        'TEST(${classname}_test, ${functionname}) {\n'
+                        'TEST_F(${classname}_test, ${functionname}) {\n'
                         '${testbody}'
                         '}\n\n'
                     )

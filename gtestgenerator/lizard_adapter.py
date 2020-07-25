@@ -97,13 +97,19 @@ def __has_file(target_obj, line_obj):
         return True
     else:
         return False
+import pathlib
 
 def __to_file(line_obj):
-    filepath = line_obj['path']
+    orgfilepath = line_obj['path']
+
     src = parameter.get('source').replace('./', '')
     dst = parameter.get('destination').replace('./', '')
-    dstfilepath = filepath.replace('.cpp', '_test.cpp').replace(src, dst)
-    include_filepath = line_obj['basename']+'.h'
+    dstfilepath = orgfilepath.replace('.cpp', '_test.cpp').replace(src, dst)
+
+    orgdir = pathlib.Path(os.path.dirname(orgfilepath)).resolve()
+    dstdir = pathlib.Path(os.path.dirname(dstfilepath)).resolve()
+    rel = os.path.relpath(orgdir, dstdir)
+    include_filepath = rel + '/' + line_obj['basename']+'.h'
 
     classname = line_obj['class']
     if classname == '':
@@ -114,7 +120,7 @@ def __to_file(line_obj):
     ccn = line_obj['ccn']
 
     file_obj = {
-                'filepath':filepath,
+                'filepath':orgfilepath,
                 'dstfilepath':dstfilepath,
                 'testdata':{
                     'includepaths':[

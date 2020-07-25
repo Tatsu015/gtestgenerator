@@ -19,11 +19,9 @@ def load_args():
         __export_default_config()
         exit(0)
 
-    path = __find_config(os.getcwd())
-    if path:
-        f = open(path, 'r')
-        global __parameter
-        __parameter = json.loads(f.read())
+    filepath = __find_config_file(os.getcwd())
+    if filepath:
+        __load_parameter(filepath)
     else:
         print('Cannot find .gigconfig file. Use default value.')
 
@@ -85,6 +83,16 @@ def __setup_argument():
         help='Exclude spacify source file name')
 
     parser.add_argument(
+        '--nomerge',
+        help='Do not merge test code when already exist',
+        action='store_true')
+
+    parser.add_argument(
+        '--overwrite',
+        help='Overwrite test code when already exist',
+        action='store_true')
+
+    parser.add_argument(
         '--debug',
         help='Show debug infomation',
         action='store_true')
@@ -100,6 +108,17 @@ def __setup_default_parameter(args):
     __parameter['destination'] = args.destination
     __parameter['template'] = args.template
     __parameter['exclude'] = args.exclude
+    __parameter['nomerge'] = args.nomerge
+    __parameter['overwrite'] = args.overwrite
+
+def __load_parameter(filepath):
+    f = open(filepath, 'r')
+    global __parameter
+    js = json.loads(f.read())
+    for key in js:
+        if key not in __parameter:
+            print('Cannot use [' + key + '] key in .gtgconfig!')
+            exit(0)
 
 def __export_default_config():
     global __parameter
@@ -110,12 +129,14 @@ def __export_default_config():
         'source':__parameter['source'],
         'destination':__parameter['destination'],
         'template':__parameter['template'],
-        'exclude':__parameter['exclude']
+        'exclude':__parameter['exclude'],
+        'nomerge':__parameter['nomerge'],
+        'overwrite':__parameter['overwrite'],
     }
     json.dump(parameter, f, indent=4)
 
 
-def __find_config(currentpath):
+def __find_config_file(currentpath):
     pos = currentpath.rfind('/')
 
     while pos != 0:
@@ -125,7 +146,6 @@ def __find_config(currentpath):
 
         currentpath = currentpath[:pos]
         pos = currentpath.rfind('/')
-
 
     return ''
 

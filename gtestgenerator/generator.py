@@ -20,12 +20,20 @@ def __to_testcode(template_tokens,data_objects):
         dstfilepath = data_object["dstfilepath"]
         already_exist = os.path.isfile(dstfilepath)
         if already_exist:
-            old_data_obj = testcode.parse_file(dstfilepath)
-            data_object = merge.merge(data_object, old_data_obj)
+            if parameter.get('nomerge'):
+                continue
+            elif parameter.get('overwrite'):
+                __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
+            else:
+                old_data_obj = testcode.parse_file(dstfilepath)
+                data_object = merge.merge(data_object, old_data_obj)
+                __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
         else:
             dstdirpath = os.path.dirname(dstfilepath)
             os.makedirs(dstdirpath, exist_ok=True)
+            __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
 
-        out = open(dstfilepath,mode='w')
-        d = template.to_code(template_tokens, data_object["testdata"])
-        out.write(d)
+def __write_testcode(filepath, template_tokens, data_object):
+    out = open(filepath,mode='w')
+    d = template.to_code(template_tokens, data_object)
+    out.write(d)
