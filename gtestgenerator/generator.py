@@ -11,18 +11,19 @@ from gtestgenerator import parameter
 
 def execute():
     parameter.load_args()
-    js = lizard_adapter.parse(parameter.get('source'))
-    template_tokens = template.parse(parameter.get('template'))
-    __to_testcode(template_tokens,js)
+    js = lizard_adapter.parse(parameter.get("source"))
+    template_tokens = template.parse(parameter.get("template"))
+    __to_testcode(template_tokens, js)
 
-def __to_testcode(template_tokens,data_objects):
+
+def __to_testcode(template_tokens, data_objects):
     for data_object in data_objects:
         dstfilepath = data_object["dstfilepath"]
         already_exist = os.path.isfile(dstfilepath)
         if already_exist:
-            if parameter.get('nomerge'):
+            if parameter.get("nomerge"):
                 continue
-            elif parameter.get('overwrite'):
+            elif parameter.get("overwrite"):
                 __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
             else:
                 old_data_obj = testcode.parse_file(dstfilepath)
@@ -33,7 +34,8 @@ def __to_testcode(template_tokens,data_objects):
             os.makedirs(dstdirpath, exist_ok=True)
             __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
 
+
 def __write_testcode(filepath, template_tokens, data_object):
-    out = open(filepath,mode='w')
+    out = open(filepath, mode="w")
     d = template.to_code(template_tokens, data_object)
     out.write(d)

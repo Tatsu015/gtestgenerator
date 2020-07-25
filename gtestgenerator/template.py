@@ -5,22 +5,24 @@ import re
 from gtestgenerator import merge
 from gtestgenerator import condition
 
+
 class _Token:
     def __init__(self):
         pass
 
-    def _append_val_key(self,s):
-        return '${' + s + '}'
+    def _append_val_key(self, s):
+        return "${" + s + "}"
 
-    def _strip_val_key(self,s):
-        return s.replace('$','').replace('{','').replace('}','')
+    def _strip_val_key(self, s):
+        return s.replace("$", "").replace("{", "").replace("}", "")
 
     def _replace_str_datas(self, s, data_obj):
         tmp = s
-        for k,v in data_obj.items():
+        for k, v in data_obj.items():
             if type(v) is str:
                 tmp = tmp.replace(self._append_val_key(k), v)
         return tmp
+
 
 class _LeafToken(_Token):
     def __init__(self, data):
@@ -32,6 +34,7 @@ class _LeafToken(_Token):
         d = self._replace_str_datas(d, data_obj)
         return d
 
+
 class _IfToken(_Token):
     def __init__(self, condition, true_child_token, false_child_token):
         super().__init__()
@@ -40,7 +43,7 @@ class _IfToken(_Token):
         self.__false_child_token = false_child_token
 
     def to_code(self, data_obj):
-        d = ''
+        d = ""
         child = None
         if self.__condition.check(data_obj):
             child = self.__false_child_token
@@ -50,6 +53,7 @@ class _IfToken(_Token):
         d = self._replace_str_datas(d, data_obj)
         return d
 
+
 class _ForeachToken(_Token):
     def __init__(self, condition, children):
         super().__init__()
@@ -57,7 +61,7 @@ class _ForeachToken(_Token):
         self.__children = children
 
     def to_code(self, data_obj):
-        d = ''
+        d = ""
         condition = self._strip_val_key(self.__condition)
         for i in data_obj[condition]:
             for child in self.__children:
@@ -66,63 +70,58 @@ class _ForeachToken(_Token):
         d = self._replace_str_datas(d, data_obj)
         return d
 
+
 def parse(filepath):
     # TODO this tokens will read from main.template
     tokens = [
         _LeafToken(
-            '#include <gtest/gtest.h>\n'
-            '\n'
-            '#define private public\n'
-            '#define protected public\n\n'
+            "#include <gtest/gtest.h>\n"
+            "\n"
+            "#define private public\n"
+            "#define protected public\n\n"
         ),
+        _ForeachToken("${includepaths}", [_LeafToken('#include "${filepath}"')]),
+        _LeafToken("\n\n" "using namespace ::testing;\n" "\n"),
         _ForeachToken(
-            '${includepaths}', [_LeafToken('#include "${filepath}"')]
-        ),
-        _LeafToken(
-            '\n\n'
-            'using namespace ::testing;\n'
-            '\n'
-        ),
-        _ForeachToken('${classes}', [
-            _LeafToken(
-                'class ${classname}_test : public ::testing::Test {\n'
-            ),
-            _IfToken(
-                condition.MergeCondition(),
-                _LeafToken(
-                    'protected:\n'
-                    '  virtual void SetUp() {\n'
-                    '  }\n'
-                    '  virtual void TearDown() {\n'
-                    '  }\n'
-                ),
-                _LeafToken(
-                    '${fixturebody}\n'
-                )
-            ),
-            _LeafToken(
-                '};\n\n'
-            ),
-            _ForeachToken('${functions}', [
+            "${classes}",
+            [
+                _LeafToken("class ${classname}_test : public ::testing::Test {\n"),
                 _IfToken(
                     condition.MergeCondition(),
                     _LeafToken(
-                        'TEST_F(${classname}_test, ${functionname}) {\n'
-                        '}\n\n'
+                        "protected:\n"
+                        "  virtual void SetUp() {\n"
+                        "  }\n"
+                        "  virtual void TearDown() {\n"
+                        "  }\n"
                     ),
-                    _LeafToken(
-                        'TEST_F(${classname}_test, ${functionname}) {\n'
-                        '${testbody}'
-                        '}\n\n'
-                    )
-                )
-            ])
-        ])
+                    _LeafToken("${fixturebody}\n"),
+                ),
+                _LeafToken("};\n\n"),
+                _ForeachToken(
+                    "${functions}",
+                    [
+                        _IfToken(
+                            condition.MergeCondition(),
+                            _LeafToken(
+                                "TEST_F(${classname}_test, ${functionname}) {\n" "}\n\n"
+                            ),
+                            _LeafToken(
+                                "TEST_F(${classname}_test, ${functionname}) {\n"
+                                "${testbody}"
+                                "}\n\n"
+                            ),
+                        )
+                    ],
+                ),
+            ],
+        ),
     ]
     return tokens
 
+
 def to_code(tokens, data_obj):
-    d = ''
+    d = ""
     for t in tokens:
         d = d + t.to_code(data_obj)
     return d
