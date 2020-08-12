@@ -2,8 +2,8 @@
 
 import json
 import re
-from gtestgenerator import merge
-from gtestgenerator import condition
+import merge
+import condition
 
 
 class _Token:

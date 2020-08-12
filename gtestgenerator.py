@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from gtestgenerator import generator
+import generator
 
 
 def main():

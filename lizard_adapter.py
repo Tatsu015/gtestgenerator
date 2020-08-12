@@ -5,8 +5,8 @@ import os
 import json
 import subprocess
 import lizard
-from gtestgenerator import parameter
-from gtestgenerator import filter as flt
+import parameter
+import filter as flt
 
 
 def parse(path):

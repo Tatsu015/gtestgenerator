@@ -2,11 +2,11 @@
 
 import json
 import os
-from gtestgenerator import template
-from gtestgenerator import testcode
-from gtestgenerator import merge
-from gtestgenerator import lizard_adapter
-from gtestgenerator import parameter
+import template
+import testcode
+import merge
+import lizard_adapter
+import parameter
 
 
 def execute():
@@ -30,12 +30,14 @@ def __to_testcode(template_tokens, data_objects):
                 data_object = merge.merge(data_object, old_data_obj)
                 __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
         else:
-            dstdirpath = os.path.dirname(dstfilepath)
-            os.makedirs(dstdirpath, exist_ok=True)
             __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
 
 
 def __write_testcode(filepath, template_tokens, data_object):
+    # create directory, if not exist
+    dstdirpath = os.path.dirname(filepath)
+    os.makedirs(dstdirpath, exist_ok=True)
+
     out = open(filepath, mode="w")
     d = template.to_code(template_tokens, data_object)
     out.write(d)

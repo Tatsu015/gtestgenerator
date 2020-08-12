@@ -2,7 +2,7 @@
 
 import json
 import re
-from gtestgenerator import parameter
+import parameter
 
 
 def is_export(data_obj):

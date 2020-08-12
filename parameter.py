@@ -44,8 +44,7 @@ def __setup_argument():
     )
 
     parser.add_argument(
-        "-s",
-        "--source",
+        "source",
         type=str,
         default=".",
         help="Specify the source code directory for skeleton generation",
@@ -55,7 +54,7 @@ def __setup_argument():
         "-d",
         "--destination",
         type=str,
-        default="testcode",
+        default="test",
         help="Specify the skeleton output destination directory",
     )
 
@@ -76,7 +75,7 @@ def __setup_argument():
     parser.add_argument(
         "--template",
         type=str,
-        default="../etc/gtestgenerator/testcode.template",
+        default="./etc/gtestgenerator/testcode.template",
         help="Specify the skeleton template file",
     )
 
