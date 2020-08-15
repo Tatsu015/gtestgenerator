@@ -76,7 +76,7 @@ def __extract_includefiles(testdata):
 
 
 def __extract_testfixtures(testdata):
-    tmp = re.split(r"class\s", testdata)
+    tmp = re.split(r"^class\s", testdata)
     return tmp[1:]
 
 
