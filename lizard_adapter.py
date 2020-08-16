@@ -112,9 +112,7 @@ import pathlib
 def __to_file(line_obj):
     orgfilepath = line_obj["path"]
 
-    src = parameter.get("source").replace("./", "")
-    dst = parameter.get("destination").replace("./", "")
-    dstfilepath = orgfilepath.replace(".cpp", "_test.cpp").replace(src, dst)
+    dstfilepath = __generate_dest_filepath(orgfilepath, parameter.get("source"), parameter.get("destination"))
 
     orgdir = pathlib.Path(os.path.dirname(orgfilepath)).resolve()
     dstdir = pathlib.Path(os.path.dirname(dstfilepath)).resolve()
@@ -249,3 +247,16 @@ def __to_overrided_func(funcs_obj, line_obj):
 
 def __extract_funcs_obj(class_obj, funcname):
     return class_obj["functions"]
+
+
+def __generate_dest_filepath(org, src, dst):
+    src = src.replace("./", "")
+    if src[-1] == "/":
+        src = src[:-1]
+
+    dst = dst.replace("./", "")
+    if dst[-1] == "/":
+        dst = dst[:-1]
+
+    dstfilepath = org.replace(".cpp", "_test.cpp").replace(src, dst)
+    return dstfilepath
