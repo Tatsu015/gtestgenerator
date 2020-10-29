@@ -20,6 +20,12 @@ private:
   void updateMindMap();
   void addLayouterDecorator(AbstractLayoutProxy* layoutDecolator);
 
+  const int* operator&() const
+  {
+      return &mValue;
+  }
+
+
 private slots:
   void onStartTimer();
   void onUpdateMindMap();

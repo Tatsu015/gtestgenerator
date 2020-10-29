@@ -40,6 +40,10 @@ def __basename(path):
 def __line_to_object(line):
     elms = list(filter(lambda a: a != "", line.split(" ")))
 
+    if len(elms) > 6:
+        elms[5] = elms[5] + elms[6]
+        elms = elms[:7]
+
     locationElms = elms[5].split("@")
     cls_and_func = __class_and_function(locationElms[0])
     lineinfos = locationElms[1].split("-")
