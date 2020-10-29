@@ -4,10 +4,8 @@ setup(
     name="gtestgenerator",
     version="1.0.0",
     description="C++ google test skeleton generator",
-    author="s_tatsu",
+    packages=find_packages(),
     install_requires=["lizard"],
-    url="https://bitbucket.org/s_tatsu/gtestgenerator.git",
-    packages=["."],
-    entry_points={"console_scripts": ["gtestgenerator = gtestgenerator:main"]},
-    data_files=[("etc/gtestgenerator", ["etc/gtestgenerator/testcode.template"])],
+    entry_points={"console_scripts": ["gtestgenerator = gtestgenerator.main:execute"]},
+#    data_files=[("etc/gtestgenerator", ["etc/gtestgenerator/testcode.template"])],
 )

@@ -2,8 +2,8 @@
 
 import json
 import re
-import merge
-import condition
+from . import merge
+from . import condition
 
 
 class _Token:

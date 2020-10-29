@@ -2,7 +2,7 @@
 
 import json
 import re
-import parameter
+from . import parameter
 
 
 def is_export(data_obj):
