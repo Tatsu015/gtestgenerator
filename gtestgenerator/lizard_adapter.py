@@ -26,6 +26,8 @@ def parse(path):
 def __class_and_function(data):
     if "::" in data:
         tmp = data.split("::")
+        if len(tmp) < 2:
+            print("Error : " +data + "cannot split by ::!")
         return {"class": tmp[0], "functions": tmp[1]}
     else:
         return {"class": "", "functions": data}
@@ -39,6 +41,10 @@ def __basename(path):
 
 def __line_to_object(line):
     elms = list(filter(lambda a: a != "", line.split(" ")))
+
+    if len(elms) < 5:
+        print('Error : too few line elements ' + elms)
+        return None
 
     if len(elms) > 6:
         elms[5] = elms[5] + elms[6]
