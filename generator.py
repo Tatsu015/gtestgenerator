@@ -2,11 +2,11 @@
 
 import json
 import os
-from . import template
-from . import testcode
-from . import merge
-from . import lizard_adapter
-from . import parameter
+import template
+import testcode
+import merge
+import lizard_adapter
+import parameter
 
 
 def execute():

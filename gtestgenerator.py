@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from . import generator
+import generator
 
 
-def execute():
+def main():
     generator.execute()
 
 
