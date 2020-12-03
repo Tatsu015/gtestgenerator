@@ -11,7 +11,7 @@ import parameter
 
 def execute():
     parameter.load_args()
-    js = lizard_adapter.parse(parameter.get("source"))
+    js = lizard_adapter.parse(parameter.get("src"))
     template_tokens = template.parse(parameter.get("template"))
     __to_testcode(template_tokens, js)
 

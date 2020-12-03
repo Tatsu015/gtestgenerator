@@ -122,7 +122,7 @@ import pathlib
 def __to_file(line_obj):
     orgfilepath = line_obj["path"]
 
-    dstfilepath = __generate_dest_filepath(orgfilepath, parameter.get("source"), parameter.get("destination"))
+    dstfilepath = __generate_dest_filepath(orgfilepath, parameter.get("src"), parameter.get("dst"))
 
     orgdir = pathlib.Path(os.path.dirname(orgfilepath)).resolve()
     dstdir = pathlib.Path(os.path.dirname(dstfilepath)).resolve()

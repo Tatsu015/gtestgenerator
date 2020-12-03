@@ -44,15 +44,14 @@ def __setup_argument():
     )
 
     parser.add_argument(
-        "source",
+        "src",
         type=str,
         default=".",
         help="Specify the source code directory for skeleton generation",
     )
 
     parser.add_argument(
-        "-d",
-        "--destination",
+        "--dst",
         type=str,
         default="test",
         help="Specify the skeleton output destination directory",
@@ -115,8 +114,8 @@ def __setup_default_parameter(args):
     global __parameter
     __parameter["ccn"] = args.ccn
     __parameter["nloc"] = args.nloc
-    __parameter["source"] = args.source
-    __parameter["destination"] = args.destination
+    __parameter["src"] = args.src
+    __parameter["dst"] = args.dst
     __parameter["template"] = args.template
     __parameter["exclude"] = args.exclude
     __parameter["nomerge"] = args.nomerge
@@ -140,8 +139,8 @@ def __export_default_config():
     parameter = {
         "ccn": __parameter["ccn"],
         "nloc": __parameter["nloc"],
-        "source": __parameter["source"],
-        "destination": __parameter["destination"],
+        "src": __parameter["src"],
+        "dst": __parameter["dst"],
         "template": __parameter["template"],
         "exclude": __parameter["exclude"],
         "nomerge": __parameter["nomerge"],
