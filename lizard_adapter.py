@@ -27,7 +27,7 @@ def __class_and_function(data):
     if "::" in data:
         tmp = data.split("::")
         if len(tmp) < 2:
-            print("Error : " +data + "cannot split by ::!")
+            print('\033[31m'+ +data + 'cannot split by ::' + '\033[0m')
         return {"class": tmp[0], "functions": tmp[1]}
     else:
         return {"class": "", "functions": data}
@@ -43,7 +43,7 @@ def __line_to_object(line):
     elms = list(filter(lambda a: a != "", line.split(" ")))
 
     if len(elms) < 5:
-        print('Error : too few line elements ' + elms)
+        print('\033[31m'+'too few line elements ' + elms + '\033[0m')
         return None
 
     if len(elms) > 6:

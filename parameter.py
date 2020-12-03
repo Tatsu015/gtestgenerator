@@ -25,7 +25,7 @@ def load_args():
     if filepath:
         __load_parameter(filepath)
     else:
-        print("Cannot find .gigconfig file. Use default value.")
+        print('\033[33m'+"Cannot find .gigconfig file. Use default value."+'\033[0m')
 
     if args.debug:
         print(__parameter)
@@ -129,7 +129,8 @@ def __load_parameter(filepath):
     js = json.loads(f.read())
     for key in js:
         if key not in __parameter:
-            print("Cannot use [" + key + "] key in .gtgconfig!")
+            print('\033[31m'+ "Cannot use [" + key + "] key in .gtgconfig!" + '\033[0m')
+            print()
             exit(0)
 
 

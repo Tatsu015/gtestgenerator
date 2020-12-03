@@ -17,6 +17,9 @@ def execute():
 
 
 def __to_testcode(template_tokens, data_objects):
+    print("============================")
+    print('Export test code to')
+    print("----------------------------")
     for data_object in data_objects:
         dstfilepath = data_object["dstfilepath"]
         already_exist = os.path.isfile(dstfilepath)
@@ -31,7 +34,8 @@ def __to_testcode(template_tokens, data_objects):
                 __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
         else:
             __write_testcode(dstfilepath, template_tokens, data_object["testdata"])
-
+        print(dstfilepath)
+    print("----------------------------")
 
 def __write_testcode(filepath, template_tokens, data_object):
     # create directory, if not exist
