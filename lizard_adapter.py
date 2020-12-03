@@ -64,7 +64,7 @@ def __line_to_object(line):
         "functions": cls_and_func["functions"],
         "startline": lineinfos[0],
         "endline": lineinfos[1],
-        "path": locationElms[2],
+        "path": locationElms[2].replace(".h", ".cpp"), # do not care method defined in header or source. so header change to source
         "basename": __basename(locationElms[2]),
     }
 
