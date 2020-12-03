@@ -8,5 +8,5 @@ setup(
     py_modules=["gtestgenerator"],
     install_requires=["lizard"],
     entry_points={"console_scripts": ["gtestgenerator = gtestgenerator:main"]},
-#    data_files=[("etc/gtestgenerator", ["etc/gtestgenerator/testcode.template"])],
+    #    data_files=[("etc/gtestgenerator", ["etc/gtestgenerator/testcode.template"])],
 )

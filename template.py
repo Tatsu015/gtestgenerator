@@ -104,7 +104,8 @@ def parse(filepath):
                         _IfToken(
                             condition.MergeCondition(),
                             _LeafToken(
-                                "/**\n * @class ${classname}\n * @function ${functionname}\n * @detail @todo\n * @input @todo\n * @standard @todo\n */\nTEST_F(${classname}_test, ${functionname}) {\n" "}\n\n"
+                                "/**\n * @class ${classname}\n * @function ${functionname}\n * @detail @todo\n * @input @todo\n * @standard @todo\n */\nTEST_F(${classname}_test, ${functionname}) {\n"
+                                "}\n\n"
                             ),
                             _LeafToken(
                                 "/**\n * @class ${classname}\n * @function ${functionname}\n * @detail @todo\n * @input @todo\n * @standard @todo\n */\nTEST_F(${classname}_test, ${functionname}) {\n"
