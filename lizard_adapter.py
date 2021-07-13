@@ -47,8 +47,9 @@ def __line_to_object(line):
         return None
 
     if len(elms) > 6:
-        elms[5] = elms[5] + elms[6]
-        elms = elms[:7]
+        # join remain elements
+        # for examplem function name contain " "
+        elms[5] = ''.join(elms[5:])
 
     locationElms = elms[5].split("@")
     cls_and_func = __class_and_function(locationElms[0])
